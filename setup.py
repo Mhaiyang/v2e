@@ -29,7 +29,7 @@ setup(
     url='https://github.com/SensorsINI/v2e',
     scripts=["v2e.py"],
     install_requires=[
-        'numpy==1.20',
+        'numpy==1.21.0',
         'argcomplete',
         'engineering-notation', # not available on conda
         'tqdm',
