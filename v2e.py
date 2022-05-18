@@ -643,6 +643,11 @@ def main():
                         v2e_quit(1)
 
                     inputVideoFrame= inputVideoFrame[c_t:c_b, c_l:c_r] # https://stackoverflow.com/questions/15589517/how-to-crop-an-image-in-opencv-using-python
+                    if inputFrameIndex == 0:  # print info once
+                        logger.info('\n------- Crop is performed! ---------')
+                else:
+                    if inputFrameIndex == 0:  # print info once
+                        logger.info('\n------- Crop is NOT performed! ---------')
 
                 if output_height and output_width and \
                         (inputHeight != output_height or
@@ -653,16 +658,24 @@ def main():
                     inputVideoFrame = cv2.resize(
                         src=inputVideoFrame, dsize=dim, fx=fx, fy=fy,
                         interpolation=cv2.INTER_AREA)
+                    if inputFrameIndex == 0:  # print info once
+                        logger.info('\n------- Resize is performed! ---------')
+                else:
+                    if inputFrameIndex == 0:  # print info once
+                        logger.info('\n------- Resize is NOT performed! ---------')
                 if inputChannels == 3:  # color
                     if inputFrameIndex == 0:  # print info once
-                        logger.info(
-                            '\nConverting input frames from RGB color to luma')
+                        logger.info('\n------- BGR2GRAY is performed! ---------')
                     # TODO would break resize if input is gray frames
                     # convert RGB frame into luminance.
                     inputVideoFrame = cv2.cvtColor(
                         inputVideoFrame, cv2.COLOR_BGR2GRAY)  # much faster
 
                     # TODO add vid_orig output if not using slomo
+
+                else:
+                    if inputFrameIndex == 0:  # print info once
+                        logger.info('\n------- BGR2GRAY is NOT performed! ---------')
 
 
                 # save frame into numpy records
