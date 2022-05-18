@@ -76,7 +76,7 @@ def v2e_args(parser):
         "-o", "--output_folder", type=expandpath, default='v2e-output',
         help="folder to store outputs.")
     outGroupGeneral.add_argument(
-        "--avi_frame_rate", type=int, default=30,
+        "--avi_frame_rate", type=int, default=25,
         help="frame rate of output AVI video files; "
              "only affects playback rate. ")
 
@@ -269,6 +269,9 @@ def v2e_args(parser):
              "If the input is a folder, the folder should contain "
              "a ordered list of image files."
              "In addition, the user has to set the frame rate manually.")
+    inGroup.add_argument(
+        "--polarization_input", action="store_true",
+        help="The input frame would be treated as polarization frame for Slomo interpolation.")
     inGroup.add_argument(
         "--input_frame_rate", type=float,
         help="Manually define the video frame rate when the video is "

@@ -42,6 +42,9 @@ import logging
 import time
 from typing import Optional, Any
 
+# added by Haiyang Mei
+from v2ecore.v2e_utils import video_writer, v2e_quit
+
 logging.basicConfig()
 root = logging.getLogger()
 root.setLevel(logging.INFO)  # todo move to info for production
@@ -292,6 +295,9 @@ def main():
     slomo_stats_plot = args.slomo_stats_plot
     #  rotate180 = args.rotate180  # never used, consider removing
     batch_size = args.batch_size
+
+    # added by Haiyang Mei
+    polarization_input = args.polarization_input
 
     # DVS exposure
     exposure_mode, exposure_val, area_dimension = \
@@ -695,9 +701,121 @@ def main():
                     logger.info(
                         f'*** Stage 2/3: SloMo upsampling from '
                         f'{source_frames_dir}')
-                    interpTimes, avgUpsamplingFactor = slomo.interpolate(
-                        source_frames_dir, interpFramesFolder,
-                        (output_width, output_height))
+
+                    # added by Haiyang Mei
+                    if polarization_input:
+                        output_width_half = int(output_width / 2)
+                        output_height_half = int(output_height / 2)
+                        # 90 degree
+                        with TemporaryDirectory() as interpFramesFolder_i90:
+                            interpTimes_i90, avgUpsamplingFactor_i90 = slomo.interpolate_polarization(
+                                source_frames_dir, interpFramesFolder_i90,
+                                (output_width_half, output_height_half), direction='90')
+                            #45 degree
+                            with TemporaryDirectory() as interpFramesFolder_i45:
+                                interpTimes_i45, avgUpsamplingFactor_i45 = slomo.interpolate_polarization(
+                                    source_frames_dir, interpFramesFolder_i45,
+                                    (output_width_half, output_height_half), direction='45')
+                                # 135 degree
+                                with TemporaryDirectory() as interpFramesFolder_i135:
+                                    interpTimes_i135, avgUpsamplingFactor_i135 = slomo.interpolate_polarization(
+                                        source_frames_dir, interpFramesFolder_i135,
+                                        (output_width_half, output_height_half), direction='135')
+                                    # 0 degree
+                                    with TemporaryDirectory() as interpFramesFolder_i0:
+                                        interpTimes_i0, avgUpsamplingFactor_i0 = slomo.interpolate_polarization(
+                                            source_frames_dir, interpFramesFolder_i0,
+                                            (output_width_half, output_height_half), direction='0')
+
+                                        # check
+                                        # print(interpTimes_i90, avgUpsamplingFactor_i90)
+                                        # print(interpTimes_i45, avgUpsamplingFactor_i45)
+                                        # print(interpTimes_i135, avgUpsamplingFactor_i135)
+                                        # print(interpTimes_i0, avgUpsamplingFactor_i0)
+                                        # exit(0)
+                                        # if interpTimes_i90 != interpTimes_i45 or interpTimes_i90 != interpTimes_i135 or interpTimes_i90 != interpTimes_i0:
+                                        #     print('************** Not aligned time between four interpolated frames ****************')
+                                        #     exit(0)
+                                        if avgUpsamplingFactor_i90 != avgUpsamplingFactor_i45 or avgUpsamplingFactor_i90 != avgUpsamplingFactor_i135 or avgUpsamplingFactor_i90 != avgUpsamplingFactor_i0:
+                                            print('************** Not aligned factor between four interpolated frames ****************')
+                                            exit(0)
+
+                                        interpTimes = interpTimes_i90
+                                        avgUpsamplingFactor = avgUpsamplingFactor_i90
+
+                                        # merge and save
+                                        list = os.listdir(interpFramesFolder_i90)
+                                        for interpFramesName in list:
+                                            interpFramesPath_i90 = os.path.join(interpFramesFolder_i90, interpFramesName)
+                                            interpFramesPath_i45 = os.path.join(interpFramesFolder_i45, interpFramesName)
+                                            interpFramesPath_i135 = os.path.join(interpFramesFolder_i135, interpFramesName)
+                                            interpFramesPath_i0 = os.path.join(interpFramesFolder_i0, interpFramesName)
+
+                                            interpFrames_i90 = cv2.imread(interpFramesPath_i90, cv2.IMREAD_GRAYSCALE)
+                                            interpFrames_i45 = cv2.imread(interpFramesPath_i45, cv2.IMREAD_GRAYSCALE)
+                                            interpFrames_i135 = cv2.imread(interpFramesPath_i135, cv2.IMREAD_GRAYSCALE)
+                                            interpFrames_i0 = cv2.imread(interpFramesPath_i0, cv2.IMREAD_GRAYSCALE)
+
+                                            interpFrames_raw = np.zeros((output_height, output_width)).astype(np.uint8)
+
+                                            interpFrames_raw[0::2, 0::2] = interpFrames_i90
+                                            interpFrames_raw[0::2, 1::2] = interpFrames_i45
+                                            interpFrames_raw[1::2, 0::2] = interpFrames_i135
+                                            interpFrames_raw[1::2, 1::2] = interpFrames_i0
+
+                                            interpFramesPath_raw = os.path.join(interpFramesFolder, interpFramesName)
+                                            cv2.imwrite(interpFramesPath_raw, interpFrames_raw)
+
+                                        # initialize orig writer
+                                        if slomo.video_path is not None and slomo.vid_orig is not None and \
+                                                slomo.ori_writer is None:
+                                            slomo.ori_writer = video_writer(
+                                                os.path.join(slomo.video_path, slomo.vid_orig),
+                                                output_height,
+                                                output_width, frame_rate=slomo.avi_frame_rate
+                                            )
+
+                                        # initialize slomo writer
+                                        if slomo.video_path is not None and slomo.vid_slomo is not None and \
+                                                slomo.slomo_writer is None:
+                                            slomo.slomo_writer = video_writer(
+                                                os.path.join(slomo.video_path, slomo.vid_slomo),
+                                                output_height,
+                                                output_width, frame_rate=slomo.avi_frame_rate
+                                            )
+
+                                        # write orig video
+                                        if slomo.ori_writer:
+                                            src_files = sorted(
+                                                glob.glob("{}".format(source_frames_dir) + "/*.npy"))
+
+                                            # write original frames into stop-motion video
+                                            for frame_idx, src_file_path in enumerate(
+                                                    tqdm(src_files, desc='write-orig-avi',
+                                                         unit='fr'), 0):
+                                                src_frame = np.load(src_file_path)
+                                                slomo.ori_writer.write(
+                                                    cv2.cvtColor(src_frame, cv2.COLOR_GRAY2BGR))
+                                                slomo.numOrigVideoFramesWritten += 1
+
+                                        # write slomo video
+                                        frame_paths = slomo.all_images(interpFramesFolder)
+                                        if slomo.slomo_writer:
+                                            for path in tqdm(frame_paths, desc='write-slomo-vid', unit='fr'):
+                                                frame = slomo.read_image(path)
+                                                slomo.slomo_writer.write(
+                                                    cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR))
+                                                slomo.numSlomoVideoFramesWritten += 1
+
+                                        nFramesWritten = len(frame_paths)
+                                        nTimePoints = len(interpTimes)
+                                        logger.info('Wrote {} frames and returning {} frame times.'.format(
+                                                nFramesWritten, nTimePoints))
+                    else:
+                        interpTimes, avgUpsamplingFactor = slomo.interpolate(
+                            source_frames_dir, interpFramesFolder,
+                            (output_width, output_height))
+
                     avgTs = srcFrameIntervalS / avgUpsamplingFactor
                     logger.info(
                         'SloMo average upsampling factor={:5.2f}; '

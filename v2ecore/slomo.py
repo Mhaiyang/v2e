@@ -185,6 +185,40 @@ class SuperSloMo(object):
             shuffle=False)
         return videoFramesloader, frames.dim, frames.origDim
 
+    # added by Haiyang Mei
+    def __load_data_polarization(self, source_frame_path, frame_size, direction=None):
+        """Return a Dataloader instance, which is constructed with \
+            APS frames.
+
+        Parameters
+        ---------
+        images: np.ndarray, [N, W, H]
+            input APS frames.
+
+        Returns
+        -------
+        videoFramesloader: Pytorch Dataloader instance.
+        frames.dim: new size.
+        frames.origDim: original size.
+        """
+        #  frames = dataloader.Frames(images, transform=self.to_tensor)
+        if direction == '90':
+            frames = dataloader.FramesDirectory_90(source_frame_path, frame_size, transform=self.to_tensor)
+        elif direction == '45':
+            frames = dataloader.FramesDirectory_45(source_frame_path, frame_size, transform=self.to_tensor)
+        elif direction == '135':
+            frames = dataloader.FramesDirectory_135(source_frame_path, frame_size, transform=self.to_tensor)
+        elif direction == '0':
+            frames = dataloader.FramesDirectory_0(source_frame_path, frame_size, transform=self.to_tensor)
+        else:
+            print('************* direction must be 90, 45, 135, or 0 *****************')
+
+        videoFramesloader = torch.utils.data.DataLoader(
+            frames,
+            batch_size=self.batch_size,
+            shuffle=False)
+        return videoFramesloader, frames.dim, frames.origDim
+
     def __model(self, dim):
         """Initialize the pytorch model
 
@@ -494,7 +528,7 @@ class SuperSloMo(object):
         logger.info('Wrote {} frames and returning {} frame times.\nAverage upsampling factor={:5.1f}'.format(nFramesWritten,nTimePoints,avgUpsampling))
         return interpTimes, avgUpsampling
 
-    def interpolate_polarization(self, source_frame_path, output_folder, frame_size):
+    def interpolate_polarization(self, source_frame_path, output_folder, frame_size, direction=None):
         """Run interpolation. \
             Interpolated frames will be saved in folder self.output_folder.
 
@@ -544,29 +578,30 @@ class SuperSloMo(object):
             while nframes/self.batch_size<2:
                 self.batch_size=int(self.batch_size/2)
             logger.info(f'using batch_size={self.batch_size}')
-        video_frame_loader, dim, ori_dim = self.__load_data(
-            source_frame_path, frame_size)
+        # revised by Haiyang Mei
+        video_frame_loader, dim, ori_dim = self.__load_data_polarization(source_frame_path, frame_size, direction)
         if not self.model_loaded:
             (self.flow_estimator, self.warper,
              self.interpolator) = self.__model(dim)
             self.model_loaded = True
 
+        # commented by Haiyang Mei
         # construct AVI video output writer now that we know the frame size
-        if self.video_path is not None and self.vid_orig is not None and \
-                self.ori_writer is None:
-            self.ori_writer = video_writer(
-                os.path.join(self.video_path, self.vid_orig),
-                ori_dim[1],
-                ori_dim[0], frame_rate=self.avi_frame_rate
-            )
-
-        if self.video_path is not None and self.vid_slomo is not None and \
-                self.slomo_writer is None:
-            self.slomo_writer = video_writer(
-                os.path.join(self.video_path, self.vid_slomo),
-                ori_dim[1],
-                ori_dim[0], frame_rate=self.avi_frame_rate
-            )
+        # if self.video_path is not None and self.vid_orig is not None and \
+        #         self.ori_writer is None:
+        #     self.ori_writer = video_writer(
+        #         os.path.join(self.video_path, self.vid_orig),
+        #         ori_dim[1],
+        #         ori_dim[0], frame_rate=self.avi_frame_rate
+        #     )
+        #
+        # if self.video_path is not None and self.vid_slomo is not None and \
+        #         self.slomo_writer is None:
+        #     self.slomo_writer = video_writer(
+        #         os.path.join(self.video_path, self.vid_slomo),
+        #         ori_dim[1],
+        #         ori_dim[0], frame_rate=self.avi_frame_rate
+        #     )
 
         numUpsamplingReportsLeft=3 # number of times to report automatic upsampling
 
@@ -734,33 +769,35 @@ class SuperSloMo(object):
             # write input frames into video
             # don't duplicate each frame if called using rotating buffer
             # of two frames in a row
-            if self.ori_writer:
-                src_files = sorted(
-                    glob.glob("{}".format(source_frame_path) + "/*.npy"))
+            # commented by Haiyang Mei
+            # if self.ori_writer:
+            #     src_files = sorted(
+            #         glob.glob("{}".format(source_frame_path) + "/*.npy"))
+            #
+            #     # write original frames into stop-motion video
+            #     for frame_idx, src_file_path in enumerate(
+            #             tqdm(src_files, desc='write-orig-avi',
+            #                  unit='fr'), 0):
+            #         src_frame = np.load(src_file_path)
+            #         self.ori_writer.write(
+            #             cv2.cvtColor(src_frame, cv2.COLOR_GRAY2BGR))
+            #         self.numOrigVideoFramesWritten += 1
 
-                # write original frames into stop-motion video
-                for frame_idx, src_file_path in enumerate(
-                        tqdm(src_files, desc='write-orig-avi',
-                             unit='fr'), 0):
-                    src_frame = np.load(src_file_path)
-                    self.ori_writer.write(
-                        cv2.cvtColor(src_frame, cv2.COLOR_GRAY2BGR))
-                    self.numOrigVideoFramesWritten += 1
-
-            frame_paths = self.__all_images(output_folder)
-            if self.slomo_writer:
-                for path in tqdm(frame_paths,desc='write-slomo-vid',unit='fr'):
-                    frame = self.__read_image(path)
-                    self.slomo_writer.write(
-                        cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR))
-                    self.numSlomoVideoFramesWritten += 1
-        nFramesWritten=len(frame_paths)
-        nTimePoints=len(interpTimes)
+            # frame_paths = self.__all_images(output_folder)
+            # if self.slomo_writer:
+            #     for path in tqdm(frame_paths,desc='write-slomo-vid',unit='fr'):
+            #         frame = self.__read_image(path)
+            #         self.slomo_writer.write(
+            #             cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR))
+            #         self.numSlomoVideoFramesWritten += 1
+        # nFramesWritten=len(frame_paths)
+        # nTimePoints=len(interpTimes)
         avgUpsampling=upsamplingSum/nUpsamplingSamples
-        logger.info('Wrote {} frames and returning {} frame times.\nAverage upsampling factor={:5.1f}'.format(nFramesWritten,nTimePoints,avgUpsampling))
+        # logger.info('Wrote {} frames and returning {} frame times.\nAverage upsampling factor={:5.1f}'.format(nFramesWritten,nTimePoints,avgUpsampling))
+        logger.info('Average upsampling factor={:5.1f}'.format(avgUpsampling))
         return interpTimes, avgUpsampling
 
-    def __all_images(self, data_path):
+    def all_images(self, data_path):
         """Return path of all input images. Assume that the ascending order of
         file names is the same as the order of time sequence.
 
@@ -788,7 +825,7 @@ class SuperSloMo(object):
         return images_sorted
 
     @staticmethod
-    def __read_image(path):
+    def read_image(path):
         """Read image.
 
         Parameters
