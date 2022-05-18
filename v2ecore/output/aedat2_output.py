@@ -14,7 +14,7 @@ class AEDat2Output:
     outputs AEDAT-2.0 jAER format DVS data from v2e
     """
 
-    SUPPORTED_SIZES=((346,260),(240,180))
+    SUPPORTED_SIZES=((640,480),(346,260),(240,180))
 
     def __init__(self, filepath: str, output_width=346, output_height=240):
         """
@@ -29,7 +29,20 @@ class AEDat2Output:
         self.file=None
         # edit below to match https://inivation.github.io/inivation-docs/Software%20user%20guides/AEDAT_file_formats.html#introduction
         # see AEDAT-2.0 format section
-        if output_width==346 and output_height==260:
+        if output_width==640 and output_height==480:
+            # DAVIS
+            # In the 32-bit address:
+            # bit 32 (1-based) being 1 indicates an APS sample
+            # bit 11 (1-based) being 1 indicates a special event
+            # bits 11 and 32 (1-based) both being zero signals a polarity event
+            self.yShiftBits = 22
+            self.xShiftBits = 12
+            self.polShiftBits = 11  # see https://inivation.com/support/software/fileformat/#aedat-20
+            self.sizex = output_width
+            self.sizey = output_height
+            self.flipy = True  # v2e uses computer vision matrix printing convention of UL pixel being 0,0, but jAER uses original graphics and graphing convention that 0,0 is LL
+            self.flipx = True # not 100% sure why this is needed. Observed for tennis example
+        elif output_width==346 and output_height==260:
             # DAVIS
             # In the 32-bit address:
             # bit 32 (1-based) being 1 indicates an APS sample

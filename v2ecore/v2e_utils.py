@@ -48,7 +48,8 @@ class ImageFolderReader(object):
 
         self.num_frames = len(self.image_file_list)
 
-        frame = cv2.imread(self.image_file_list[0])
+        # frame = cv2.imread(self.image_file_list[0])
+        frame = cv2.imread(self.image_file_list[0], cv2.IMREAD_GRAYSCALE)
         if frame is None:
             logger.error(f'could not read a frame from file "{self.image_file_list[0]}" in folder "{self.image_folder_path}"')
             raise FileNotFoundError(f'could not read a frame named {self.image_file_list[0]} from folder {self.image_folder_path}')
@@ -64,7 +65,8 @@ class ImageFolderReader(object):
         :returns: always True
         """
         if not skip:
-            frame = cv2.imread(self.image_file_list[self.current_frame_idx])
+            # frame = cv2.imread(self.image_file_list[self.current_frame_idx])
+            frame = cv2.imread(self.image_file_list[self.current_frame_idx], cv2.IMREAD_GRAYSCALE)
         else:
             frame=None
         self.current_frame_idx += 1
