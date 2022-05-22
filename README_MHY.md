@@ -24,5 +24,5 @@
   - `python my_inference.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_intensity ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_flow/inference/run.epoch-0-flow-vis
 - `cd ../../v2e/utils_mhy`
 - `workon v2e`
-  - `python h5addf.py`
+  - `python h5addf.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_pf.h5
   - `python check_h5pf.py`
