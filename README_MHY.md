@@ -11,9 +11,18 @@
 
 ### data generation
 - `cd utils_mhy`
-  - `python demosaicing.py`
-  - `python raw2frame.py`
-  - `python frame2crop.py`
+  - `python demosaicing.py` /home/mhy/data/movingcam/raw ---> /home/mhy/data/movingcam/raw_demosaicing
+  - `python raw2frame.py` /home/mhy/data/movingcam/raw_demosaicing ---> /home/mhy/data/movingcam/frame_demosaicing
+  - `python frame2crop.py` /home/mhy/data/movingcam/frame_demosaicing ---> /home/mhy/data/movingcam/crop_davis640_demosaicing
 - `cd ..`
-  - `python run_mhy.py`
-  - 
+  - `python run_mhy.py` /home/mhy/data/movingcam/crop_davis640_demosaicing ---> /home/mhy/v2e/output/raw_demosaicing_polarization
+- `cd utils_mhy`
+  - `python h5addp.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5
+  - `python save_intensity.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5 --- > /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_intensity
+- `cd ../../flownet2`
+- `conda activate flownet2`
+  - `python my_inference.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_intensity ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_flow/inference/run.epoch-0-flow-vis
+- `cd ../../v2e/utils_mhy`
+- `workon v2e`
+  - `python h5addf.py`
+  - `python check_h5pf.py`
