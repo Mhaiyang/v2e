@@ -8,16 +8,6 @@
  @Function:
  
 """
-"""
- @Time    : 02.04.22 11:07
- @Author  : Haiyang Mei
- @E-mail  : haiyang.mei@outlook.com
-
- @Project : firenet-pdavis
- @File    : h5disp.py
- @Function:
-
-"""
 import os
 import h5py
 from tqdm import tqdm
