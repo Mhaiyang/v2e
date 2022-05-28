@@ -26,3 +26,4 @@
 - `workon v2e`
   - `python h5addf.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_pf.h5
   - `python check_h5pf.py`
+  - 
