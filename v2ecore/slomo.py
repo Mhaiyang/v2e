@@ -51,7 +51,7 @@ class SuperSloMo(object):
             vid_orig='original.avi',
             vid_slomo='slomo.avi',
             preview=False,
-            avi_frame_rate=30):
+            avi_frame_rate=25):
         """
         init
 
