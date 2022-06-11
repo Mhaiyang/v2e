@@ -20,20 +20,24 @@ root_dir = '/home/mhy/v2e/output/raw_demosaicing_polarization'
 list = os.listdir(root_dir)
 for name in tqdm(list):
     h5p_path = os.path.join(root_dir, name, name + '_p.h5')
-    # intensity_dir = os.path.join(root_dir, name, name + '_intensity')
-    intensity_dir = os.path.join(root_dir, name, name + '_frame')
+    intensity_dir = os.path.join(root_dir, name, name + '_intensity')
+    # intensity_dir = os.path.join(root_dir, name, name + '_frame')
     check_mkdir(intensity_dir)
 
     input = h5py.File(h5p_path, 'r')
 
-    # intensity = input['/intensity']
-    intensity = input['/frame']
+    intensity = input['/intensity']
+    # intensity = input['/frame']
 
-    print(intensity.shape)
-    print(intensity.dtype)
+    print('before:', intensity.shape[1:], intensity.dtype)
+
+    size = ((intensity.shape[2] // 64) * 64, (intensity.shape[1] // 64) * 64)
 
     for i in tqdm(range(intensity.shape[0])):
+        save = cv2.resize(intensity[i, :, :], size, cv2.INTER_AREA)
+        if i == 0:
+            print('after:', save.shape, save.dtype)
         intensity_path = os.path.join(intensity_dir, '%05d.png' % i)
-        cv2.imwrite(intensity_path, intensity[i, :, :])
+        cv2.imwrite(intensity_path, save)
 
 print('Done')

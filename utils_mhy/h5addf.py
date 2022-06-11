@@ -21,7 +21,7 @@ list = os.listdir(root_dir)
 for name in tqdm(list):
     input_path = os.path.join(root_dir, name, name + '_p.h5')
     output_path = os.path.join(root_dir, name, name + '_pf.h5')
-    flow_dir = os.path.join(root_dir, name, name + '_flow', 'inference', 'run.epoch-0-npy')
+    flow_dir = os.path.join(root_dir, name, name + '_intensity_flow', 'inference', 'run.epoch-0-npy')
 
     input = h5py.File(input_path, 'r')
 
@@ -37,6 +37,8 @@ for name in tqdm(list):
 
     flow_list = os.listdir(flow_dir)
     flow_list = sorted(flow_list)
+    # print(flow_list)
+    # exit(0)
 
     flows = []
     for flow_name in tqdm(flow_list):
