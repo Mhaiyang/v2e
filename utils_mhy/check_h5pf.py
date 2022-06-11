@@ -17,7 +17,7 @@ list = os.listdir(root_dir)
 for name in tqdm(list):
     print(name)
 
-    path = os.path.join(root_dir, name, name + '_pf.h5')
+    path = os.path.join(root_dir, name, name + '_pff.h5')
 
     f = h5py.File(path, 'r')
     for key in f.keys():
@@ -29,6 +29,8 @@ for name in tqdm(list):
 
     print(f['/frame_idx'][:])
     print(f['/frame_ts'][:])
+
+    # exit(0)
 
 print('Done!')
 
