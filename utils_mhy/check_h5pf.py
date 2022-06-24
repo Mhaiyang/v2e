@@ -29,6 +29,7 @@ for name in tqdm(list):
 
     print(f['/frame_idx'][:])
     print(f['/frame_ts'][:])
+    print(f['/events'][:])
 
     # exit(0)
 
