@@ -17,7 +17,8 @@
 - `cd ..`
   - `python run_mhy.py` /home/mhy/data/movingcam/crop_davis640_demosaicing ---> /home/mhy/v2e/output/raw_demosaicing_polarization
 - `cd utils_mhy`
-  - `python h5addp.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5
+  - `python h5addp.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5 (deprecated)
+  - `python h5addiad.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx.h5 ---> /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_iad.h5 (new version)
   - `python save_intensity.py` /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_p.h5 --- > /home/mhy/v2e/output/raw_demosaicing_polarization/xxxxx/xxxxx_intensity
   - or `python save_direction.py`
 - `cd ../../flownet2`
