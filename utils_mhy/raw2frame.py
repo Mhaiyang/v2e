@@ -48,7 +48,7 @@ for raw_name in tqdm(raw_list):
         # print(frame_raw.shape)
         # print(frame_raw.dtype)
         # exit(0)
-        frame_path = os.path.join(frame_dir_1, '%04d.png' % (index + half))
+        frame_path = os.path.join(frame_dir_1, '%04d.png' % index)
         cv2.imwrite(frame_path, frame_raw)
 
 print('Succeed!')
