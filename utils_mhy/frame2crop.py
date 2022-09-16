@@ -13,24 +13,24 @@ import cv2
 from tqdm import tqdm
 from misc import check_mkdir
 
-frame_root = '/home/mhy/data/movingcam/frame_demosaicing'
-output_root = '/home/mhy/data/movingcam/crop_davis640_demosaicing'
+frame_root = '/home/mhy/data/movingcam/frame_demosaicing_5s'
+output_root = '/home/mhy/data/movingcam/crop_davis346_demosaicing'
 
 # DAVIS 346
-# v_step = 512
-# h_step = 612
-# v_number = 4
-# h_number = 4
-# height = 260
-# width = 346
+v_step = 280
+h_step = 348
+v_number = 7
+h_number = 7
+height = 260
+width = 346
 
 # DAVIS 640
-v_step = 512
-h_step = 816
-v_number = 4
-h_number = 3
-height = 480
-width = 640
+# v_step = 512
+# h_step = 816
+# v_number = 4
+# h_number = 3
+# height = 480
+# width = 640
 
 frame_dir_list = os.listdir(frame_root)
 frame_dir_list = sorted(frame_dir_list)
