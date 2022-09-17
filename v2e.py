@@ -36,7 +36,8 @@ from v2ecore.v2e_args import v2e_check_dvs_exposure_args
 from v2ecore.v2e_args import NO_SLOWDOWN
 from v2ecore.renderer import EventRenderer, ExposureMode
 from v2ecore.slomo import SuperSloMo
-from v2ecore.emulator import EventEmulator
+# from v2ecore.emulator import EventEmulator
+from v2ecore.emulator_mhy import EventEmulator
 from v2ecore.v2e_utils import inputVideoFileDialog
 import logging
 import time
