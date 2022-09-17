@@ -37,7 +37,8 @@ from v2ecore.v2e_args import NO_SLOWDOWN
 from v2ecore.renderer import EventRenderer, ExposureMode
 from v2ecore.slomo import SuperSloMo
 # from v2ecore.emulator import EventEmulator
-from v2ecore.emulator_mhy import EventEmulator
+# from v2ecore.emulator_mhy import EventEmulator
+from v2ecore.emulator_sparse import EventEmulator
 from v2ecore.v2e_utils import inputVideoFileDialog
 import logging
 import time
@@ -795,8 +796,8 @@ def main():
                                                     tqdm(src_files, desc='write-orig-avi',
                                                          unit='fr'), 0):
                                                 src_frame = np.load(src_file_path)
-                                                slomo.ori_writer.write(
-                                                    cv2.cvtColor(src_frame, cv2.COLOR_GRAY2BGR))
+                                                slomo.ori_writer.write(cv2.cvtColor(src_frame, cv2.COLOR_GRAY2BGR))
+                                                # slomo.ori_writer.write(src_frame)
                                                 slomo.numOrigVideoFramesWritten += 1
 
                                         # write slomo video
@@ -804,8 +805,8 @@ def main():
                                         if slomo.slomo_writer:
                                             for path in tqdm(frame_paths, desc='write-slomo-vid', unit='fr'):
                                                 frame = slomo.read_image(path)
-                                                slomo.slomo_writer.write(
-                                                    cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR))
+                                                slomo.slomo_writer.write(cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR))
+                                                # slomo.slomo_writer.write(frame)
                                                 slomo.numSlomoVideoFramesWritten += 1
 
                                         nFramesWritten = len(frame_paths)
