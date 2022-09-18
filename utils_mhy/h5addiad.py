@@ -17,8 +17,8 @@ from tqdm import tqdm
 mask_aolp = False
 
 root_dir = '/home/mhy/v2e/output/raw_demosaicing_polarization_new'
-# list = os.listdir(root_dir)
-list = ['007118']
+list = os.listdir(root_dir)
+# list = ['007118']
 for name in tqdm(list):
     h5_path = os.path.join(root_dir, name, name + '.h5')
     h5iad_path = os.path.join(root_dir, name, name + '_iad.h5')
