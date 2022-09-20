@@ -14,36 +14,13 @@ import sys
 sys.path.append('..')
 from misc import check_mkdir
 
-input_root = '/home/mhy/data/movingcam/crop_davis346_demosaicing'
-output_root = '/home/mhy/v2e/output/raw_demosaicing_polarization_new'
+input_root = '/home/mhy/data/movingcam/crop_davis640_demosaicing_5s'
+output_root = '/home/mhy/v2e/output/raw_demosaicing_polarization_5s'
 # output_root = '/home/mhy/v2e/output/raw_uniform'
 check_mkdir(output_root)
 
 list = [
-    '000018',
-    '000118',
-    '001018',
-    '001118',
-    '002018',
-    '002118',
-    '003018',
-    '003118',
-    '004018',
-    '004118',
-    '005018',
-    '005118',
-    '007018',
-    '007118',
-    '008018',
-    '008118',
-    '009018',
-    '009118',
-    '010018',
-    '010118',
-    '013018',
-    '013118',
-    '014018',
-    '014118',
+    '007004',
 ]
 
 for name in list:
@@ -60,9 +37,9 @@ for name in list:
     #     input_dir, name, name, name, output_dir)
 
     # gaussian-sampled threshold
-    threshold = torch.normal(0.3, 0.03, size=[1], dtype=torch.float32)[0]
+    threshold = torch.normal(0.2, 0.02, size=[1], dtype=torch.float32)[0]
     sigma = threshold * 0.1
-    call_with_args = 'python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.001 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=346 --output_height=260 --cutoff_hz=30 --refractory_period 0.00004'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
+    call_with_args = 'python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.001 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
 
     print(call_with_args)
 

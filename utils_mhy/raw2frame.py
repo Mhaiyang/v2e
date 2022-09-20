@@ -34,7 +34,8 @@ for raw_name in tqdm(raw_list):
     check_mkdir(frame_dir_0)
     check_mkdir(frame_dir_1)
 
-    number = raw.shape[0]
+    # number = raw.shape[0]
+    number = 250
     half = int(number / 2)
     for index in tqdm(range(half)):
         frame_raw = raw[index, :, :]
@@ -52,4 +53,3 @@ for raw_name in tqdm(raw_list):
         cv2.imwrite(frame_path, frame_raw)
 
 print('Succeed!')
-
