@@ -20,7 +20,7 @@ output_root = '/home/mhy/v2e/output/raw_demosaicing_polarization_5s'
 check_mkdir(output_root)
 
 list = [
-    '007004',
+    '007104',
 ]
 
 for name in list:
