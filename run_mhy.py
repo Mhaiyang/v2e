@@ -20,7 +20,26 @@ output_root = '/home/mhy/v2e/output/raw_demosaicing_polarization_5s'
 check_mkdir(output_root)
 
 list = [
+    '001004',
+    '001104',
+    '004004',
+    '004104',
+    '005004',
+    '005104',
+    '007004',
     '007104',
+    '008004',
+    '008104',
+    '009004',
+    '009104',
+    '010004',
+    '010104',
+    '013004',
+    '013104',
+    '014004',
+    '014104',
+    '015001',
+    '015101',
 ]
 
 for name in list:
@@ -37,7 +56,7 @@ for name in list:
     #     input_dir, name, name, name, output_dir)
 
     # gaussian-sampled threshold
-    threshold = torch.normal(0.2, 0.02, size=[1], dtype=torch.float32)[0]
+    threshold = torch.normal(0.18, 0.02, size=[1], dtype=torch.float32)[0]
     sigma = threshold * 0.1
     call_with_args = 'python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.001 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
 

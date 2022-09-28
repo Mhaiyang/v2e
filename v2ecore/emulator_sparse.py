@@ -271,7 +271,7 @@ class EventEmulator(object):
 
     def prepare_storage(self, n_frames, frame_ts):
         # extra prepare for frame storage (sparse)
-        n_frames_sparse = int(n_frames / 100)
+        n_frames_sparse = int(n_frames / 50)
         if self.dvs_h5:
             # for frame
             self.frame_h5_dataset = self.dvs_h5.create_dataset(
@@ -281,7 +281,7 @@ class EventEmulator(object):
                 compression="gzip")
 
             frame_ts_arr = np.array(frame_ts, dtype=np.float32) * 1e6
-            frame_ts_arr_sparse = frame_ts_arr[::100]
+            frame_ts_arr_sparse = frame_ts_arr[::50]
             self.frame_ts_dataset = self.dvs_h5.create_dataset(
                 name="frame_ts",
                 shape=(n_frames_sparse,),
@@ -516,8 +516,8 @@ class EventEmulator(object):
         # like a DAVIS, write frame into the file if it's HDF5
         if self.frame_h5_dataset is not None:
             # save frame data
-            if self.frame_counter % 100 == 0:
-                self.frame_h5_dataset[int(self.frame_counter / 100)] = new_frame.astype(np.uint8)
+            if self.frame_counter % 50 == 0:
+                self.frame_h5_dataset[int(self.frame_counter / 50)] = new_frame.astype(np.uint8)
 
         # update frame counter
         self.frame_counter += 1
@@ -793,8 +793,8 @@ class EventEmulator(object):
         if self.frame_ev_idx_dataset is not None:
             # save frame event idx
             # determine after the events are added
-            if (self.frame_counter - 1) % 100 == 0:
-                self.frame_ev_idx_dataset[int((self.frame_counter - 1) / 100)] = self.dvs_h5_dataset.shape[0]
+            if (self.frame_counter - 1) % 50 == 0:
+                self.frame_ev_idx_dataset[int((self.frame_counter - 1) / 50)] = self.dvs_h5_dataset.shape[0]
 
         # assign new time
         self.t_previous = t_frame
