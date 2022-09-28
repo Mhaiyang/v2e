@@ -16,7 +16,6 @@ from misc import check_mkdir
 
 input_root = '/home/mhy/data/movingcam/crop_davis640_demosaicing_5s'
 output_root = '/home/mhy/v2e/output/raw_demosaicing_polarization_5s'
-# output_root = '/home/mhy/v2e/output/raw_uniform'
 check_mkdir(output_root)
 
 list = [
