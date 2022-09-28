@@ -57,7 +57,7 @@ for name in list:
     # gaussian-sampled threshold
     threshold = torch.normal(0.18, 0.02, size=[1], dtype=torch.float32)[0]
     sigma = threshold * 0.1
-    call_with_args = 'python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.001 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
+    call_with_args = 'python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.005 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
 
     print(call_with_args)
 
