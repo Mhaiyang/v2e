@@ -42,6 +42,7 @@ check_mkdir(output_root)
 # ]
 
 list = os.listdir(input_root)
+list = sorted(list)
 
 for name in list:
     input_dir = os.path.join(input_root, name)
@@ -59,7 +60,7 @@ for name in list:
     # gaussian-sampled threshold
     threshold = torch.normal(0.12, 0.02, size=[1], dtype=torch.float32)[0]
     sigma = threshold * 0.1
-    call_with_args = 'CUDA_VISIBLE_DEVICES=0 python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.005 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003 --batch_size 64'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
+    call_with_args = 'CUDA_VISIBLE_DEVICES=0 python v2e.py -i {} --polarization_input --input_frame_rate 25 --davis_output --dvs_h5 {}.h5 --dvs_aedat2 {}.aedat --dvs_text {}.txt --overwrite --timestamp_resolution=.0001 --auto_timestamp_resolution=False --dvs_exposure duration 0.005 --output_folder={} --pos_thres={} --neg_thres={} --sigma_thres={} --output_width=640 --output_height=480 --cutoff_hz=30 --refractory_period 0.00003 --batch_size 16'.format(input_dir, name, name, name, output_dir, threshold, threshold, sigma)
 
     print(call_with_args)
 
